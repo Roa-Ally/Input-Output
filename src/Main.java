@@ -117,6 +117,74 @@ public class Main {
 
     }
 
+    public static void normalize(String source) throws FileNotFoundException{
+        String sValue;
+        int iValue;
+        double dValue;
+        ArrayList<String> content = new ArrayList<String>();
+        Scanner in = new Scanner(new File(source));
+        String sourceEnd = source.substring(source.length()-3);
+        if (sourceEnd.matches("txt")){
+            in.useDelimiter("\t");
+        }else
+            in.useDelimiter(",");
+
+        while (in.hasNextLine())
+            content.add(in.nextLine());
+        in.close();
+        PrintWriter out = new PrintWriter(source);
+        if (!sourceEnd.matches("txt") && !sourceEnd.matches("csv"))
+            throw new FileNotFoundException("Not a .txt or .csv file");
+        for (int i = 0; i < content.size(); i++){
+            sValue = content.get(i);
+            if (sValue.length() == 0){
+                if (sourceEnd.matches("txt")){
+                    out.print("N/A\t");
+                    out.flush();
+                }else{
+                    out.print("N/A,");
+                    out.flush();
+                }
+                continue;
+            }
+            try{
+                iValue = Integer.parseInt(sValue);
+                if (sourceEnd.matches("txt")) {
+                    out.printf("%+010d\t", iValue);
+                }else
+                    out.printf("%+010d,", iValue);
+                out.flush();
+            } catch (NumberFormatException e){
+                try {
+                    dValue = Double.parseDouble(sValue);
+                    if (dValue > 100.0 || dValue < 0.01){
+                        if (sourceEnd.matches("txt")){
+                            out.printf("%.2e\t", dValue);
+                        }else
+                            out.printf("%.2e,", dValue);
+
+                    }else
+                        if (sourceEnd.matches("txt")){
+                            out.printf("%.2f\t", dValue);
+                        }else
+                            out.printf("%.2f,", dValue);
+                        out.flush();
+                }catch (NumberFormatException e1){
+                    if (sValue.length() > 13){
+                        if (sourceEnd.matches("txt")){
+                            out.printf("%.10s...\t", sValue);
+                        }else
+                            out.printf("%.10s...,", sValue);
+                        out.flush();
+                    }
+                }
+            }
+        }
+        in.close();
+        out.close();
+
+    }
+
 }
 
 

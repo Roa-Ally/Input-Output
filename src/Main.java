@@ -31,10 +31,10 @@ public class Main {
             System.out.printf("---------------------------------------------------------------------------%n");
 
             System.out.println("When you are finish please enter \"quit\"");
-            String option = scan.next();
+            String option = scan.nextLine();
             String[] conversion = option.split(" ");
 
-            if (conversion.length != 3 || conversion.length != 2) {
+            if (conversion.length != 3 && conversion.length != 2) {
                 System.out.println("Error invalid input please try again!");
             } else if (option.matches("quit")) {
                 break;

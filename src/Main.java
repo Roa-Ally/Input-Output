@@ -3,7 +3,8 @@ import java.io.FileNotFoundException;
 import java.io.PrintWriter;
 import java.util.*;
 public class Main {
-    private static final String INPUT = System.getProperty("user.dir") + "/src/";
+    private static final String INPUT = System.getProperty("user.dir") + "/input/";
+    private static final String OUTPUT = System.getProperty("user.dir") + "/output/";
 
     public static void main(String[] args) {
         Scanner scan = new Scanner(System.in);
@@ -44,13 +45,37 @@ public class Main {
                     System.out.println("Error! The convert command needs to be source.xxx destination.yyy where xxx and yyy is csv or txt Please try again!");
                     continue;
                 }
+
+                System.out.println("Converting" + conversion[1] + " to " + conversion[2]);
+
+                try {
+                    converter(INPUT + conversion[1], OUTPUT + conversion[2]);
+                    System.out.println("Converted " + INPUT + conversion[1] + " to " + OUTPUT + conversion[2]);
+                } catch (Exception exp) {
+                    System.out.println("Error! Conversion failed please check format of input file! "
+                            + exp.getMessage() +
+                            " Please try again!");
+                }
+
             } else if (conversion[0].equals("normalize")) {
                 if (!conversion[1].endsWith(".txt") && !conversion[1].endsWith(".csv")) {
                     System.out.println("Error The source command needs to be source.xxx where xxx is txt or csv");
                     continue;
                 }
-            }
+                System.out.println("Normalizing " + conversion[1]);
 
+                try{
+                    normalize(INPUT + conversion [1]);
+                    System.out.println("Normalized " + conversion[1]);
+                }catch (Exception exp){
+                    System.out.println("Error! Normalization failed please check format of input file! " +
+                            exp.getMessage() +
+                            " Please try again!");
+                }
+
+
+            }else
+                System.out.println("Error! invalid command Please try again");
         }
 
     }
@@ -110,6 +135,19 @@ public class Main {
                 }
 
 
+            }else{
+                while (in.hasNextLine()){ // csv to txt
+                    String input = in.nextLine();
+                    String[] cells = input.split(",");
+                    for (int i = 0; i < cells.length; i++){
+                        String seperate = "\t";
+                        if (i == cells.length -1){
+                            seperate = "";
+                        }
+                        out.print(cells[i] + seperate);
+                    }
+                    out.println();
+                }
             }
         }
         out.close();

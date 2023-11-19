@@ -4,13 +4,12 @@ import java.io.PrintWriter;
 import java.util.*;
 public class Main {
     private static final String INPUT = System.getProperty("user.dir") + "/src/";
-    private static final String OUTPUT = System.getProperty("user.dir") + "/src/";
 
     public static void main(String[] args) {
         Scanner scan = new Scanner(System.in);
 
 
-        System.out.println("Hello!\t hello");
+        System.out.println("Hello!"); // Welcome message
 
         while (true) {
             System.out.println();
@@ -21,44 +20,44 @@ public class Main {
             System.out.printf("--------------------------------------------------------------------------%n");
 
             System.out.printf("--------------------------------------------------------------------------%n");
-            System.out.printf("| Option                               | Explanation                     |%n");
+            System.out.printf("| Options                              | Explanation                      %n");
             System.out.printf("--------------------------------------------------------------------------%n");
 
-            System.out.printf("| convert source.txt destination.csv   | Converts txt into csv file      |%n");
-            System.out.printf("| convert source.csv destination.txt   | Converts csv into txt file      |%n");
-            System.out.printf("| normalize source.txt                 | Normalizes content of each cell |%n");
-            System.out.printf("| normalize source.csv                 | Normalizes content of each cell |%n");
+            System.out.printf("| convert source.txt destination.csv   | Converts txt into csv file       %n");
+            System.out.printf("| convert source.csv destination.txt   | Converts csv into txt file       %n");
+            System.out.printf("| normalize source.txt                 | Normalizes content of each cell  %n");
+            System.out.printf("| normalize source.csv                 | Normalizes content of each cell  %n");
 
             System.out.printf("---------------------------------------------------------------------------%n");
 
             System.out.println("When you are finish please enter \"quit\"");
-            String option = scan.nextLine();
-            String[] conversion = option.split(" ");
+            String option = scan.nextLine(); // Scanning option input
+            String[] conversion = option.split(" "); // Spliting based on space
 
-            if (conversion.length != 3 && conversion.length != 2 && conversion.length != 1) {
+            if (conversion.length == 0) { // Cannot have an empty input
                 System.out.println("Error invalid input please try again!");
-            } else if (option.matches("quit")) {
+            } else if (option.matches("quit")) { // Ends program
                 break;
 
             } else if (conversion[0].equals("convert")) {
-                if (!conversion[1].endsWith(".txt") && !conversion[1].endsWith(".csv") || !conversion[2].endsWith(".txt") && !conversion[2].endsWith(".csv")) {
+                if (conversion.length!=3 || !conversion[1].endsWith(".txt") && !conversion[1].endsWith(".csv") || !conversion[2].endsWith(".txt") && !conversion[2].endsWith(".csv")) { // Has to have three indexs and index 1 & 2 must have .txt or .csv at the end
                     System.out.println("Error! The convert command needs to be source.xxx destination.yyy where xxx and yyy is csv or txt Please try again!");
                     continue;
                 }
 
-                System.out.println("Converting " + conversion[1] + " to " + conversion[2]);
+                System.out.println("Converting " + conversion[1] + " to " + conversion[2]); // Converting method
 
                 try {
-                    converter(INPUT + conversion[1], conversion[2]);
+                    converter(INPUT + conversion[1], conversion[2]); // Sending info into constructor
                     System.out.println("Converted " + INPUT + conversion[1] + " to " + conversion[2]);
-                } catch (Exception exp) {
+                } catch (Exception exp) { // Catches if conversion fails
                     System.out.println("Error! Conversion failed please check format of file! "
                             + exp.getMessage() +
                             " Please try again!");
                 }
 
             } else if (conversion[0].equals("normalize")) {
-                if (!conversion[1].endsWith(".txt") && !conversion[1].endsWith(".csv")) {
+                if (conversion.length!= 2 ||!conversion[1].endsWith(".txt") && !conversion[1].endsWith(".csv")) {
                     System.out.println("Error The source command needs to be source.xxx where xxx is txt or csv");
                     continue;
                 }
@@ -158,7 +157,9 @@ public class Main {
 
 
         if (checkInt(cell)) {
-           return normalizeInt(cell);
+            return normalizeInt(cell);
+        }else if (checkLength(cell)){
+            return (normalizeLength(cell));
         } else if (checkFD(cell)) {
             return (normalizeFD(cell));
         } else if (cell.length() > 13) {
@@ -175,6 +176,13 @@ public class Main {
         } catch (NumberFormatException exp) {
             return false;
         }
+    }
+    public static boolean checkLength(String cell){
+            if (cell.length() >= 13)
+                return true;
+            else
+                return false;
+
     }
 
     public static boolean checkFD(String cell) {
@@ -200,6 +208,9 @@ public class Main {
         } else {
             return Integer.toString(input);
         }
+    }
+    public static String normalizeLength(String cell){
+        return cell.substring(0,10) + "...";
     }
 
     public static String normalizeFD(String cell) {

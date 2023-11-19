@@ -57,32 +57,32 @@ public class Main {
                 }
 
             } else if (conversion[0].equals("normalize")) {
-                if (conversion.length!= 2 ||!conversion[1].endsWith(".txt") && !conversion[1].endsWith(".csv")) {
+                if (conversion.length!= 2 ||!conversion[1].endsWith(".txt") && !conversion[1].endsWith(".csv")) { // Normalization need two indexes and index 1 has two end in .txt or .csv
                     System.out.println("Error The source command needs to be source.xxx where xxx is txt or csv");
                     continue;
                 }
                 System.out.println("Normalizing " + conversion[1]);
 
                 try {
-                    normalize(INPUT + conversion[1]);
+                    normalize(INPUT + conversion[1]); // Sending information to method
                     System.out.println("Normalized " + conversion[1]);
-                } catch (Exception exp) {
+                } catch (Exception exp) { // Catches failure in normalization
                     System.out.println("Error! Normalization failed please check format of input file! " +
                             exp.getMessage() +
                             " Please try again!");
                 }
 
 
-            } else
+            } else // Invalid format
                 System.out.println("Error! invalid command Please try again");
         }
 
     }
 
-    public static void converter(String start, String convert) throws Exception {
-        String startEnd = start.substring(start.length() - 3);
+    public static void converter(String start, String convert) throws Exception { // Converting method
+        String startEnd = start.substring(start.length() - 3); // Getting the last three words
         String convertEnd = convert.substring(convert.length() - 3);
-        if (start.matches(convert))
+        if (start.matches(convert)) // Cant convert the same file
             throw new Exception("Same file!");
 
         Scanner in = new Scanner(new File(start));
@@ -153,23 +153,19 @@ public class Main {
         in.close();
 
     }
-    public static String normalizeAll(String cell) throws FileNotFoundException {
-
-
-        if (checkInt(cell)) {
+    public static String normalizeAll(String cell) { // Normalization chech all method
+        if (checkInt(cell)) { //Checks int call int method
             return normalizeInt(cell);
-        }else if (checkLength(cell)){
+        }else if (checkLength(cell)){ // Checks if length is 13 calls length method
             return (normalizeLength(cell));
-        } else if (checkFD(cell)) {
+        } else if (checkFD(cell)) { // Checks if float of double calls FD method
             return (normalizeFD(cell));
-        } else if (cell.length() > 13) {
-            return cell.substring(0, 10) + "...";
         } else {
             return cell;
         }
 
     }
-    public static boolean checkInt(String cell) {
+    public static boolean checkInt(String cell) { // Checks if int
         try {
             Integer.parseInt(cell);
             return true;
@@ -177,7 +173,7 @@ public class Main {
             return false;
         }
     }
-    public static boolean checkLength(String cell){
+    public static boolean checkLength(String cell){ // Check if length id 13+
             if (cell.length() >= 13)
                 return true;
             else
@@ -185,7 +181,7 @@ public class Main {
 
     }
 
-    public static boolean checkFD(String cell) {
+    public static boolean checkFD(String cell) { // Checks if float or double
         try {
             Double.parseDouble(cell);
             return true;
@@ -194,7 +190,7 @@ public class Main {
         }
     }
 
-    public static String normalizeInt(String cell) {
+    public static String normalizeInt(String cell) { // Adds plus or negative sign and makes sure its is 10 character
         int input = Integer.parseInt(cell);
         if (cell.length() < 10) {
             if (input > 0){
@@ -209,11 +205,11 @@ public class Main {
             return Integer.toString(input);
         }
     }
-    public static String normalizeLength(String cell){
+    public static String normalizeLength(String cell){ // Takes first 10 digits and then three dots
         return cell.substring(0,10) + "...";
     }
 
-    public static String normalizeFD(String cell) {
+    public static String normalizeFD(String cell) { // Shows two digits after decimal uses scientific notation
         double input = Double.parseDouble(cell);
         if (input > 100 || input < 0.01) {
             return String.format("%.2g", input);
@@ -223,7 +219,7 @@ public class Main {
     }
 
 
-    public static void normalize(String source) throws FileNotFoundException {
+    public static void normalize(String source) throws FileNotFoundException { // Normalization method
 
         String delimiter = source.endsWith("txt") ? "\t" : ",";
         ArrayList<String> content = new ArrayList<String>();

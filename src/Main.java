@@ -3,14 +3,14 @@ import java.io.FileNotFoundException;
 import java.io.PrintWriter;
 import java.util.*;
 public class Main {
-    private static final String INPUT = System.getProperty("user.dir") + "/input/";
-    private static final String OUTPUT = System.getProperty("user.dir") + "/output/";
+    private static final String INPUT = System.getProperty("user.dir") + "/src/";
+    private static final String OUTPUT = System.getProperty("user.dir") + "/src/";
 
     public static void main(String[] args) {
         Scanner scan = new Scanner(System.in);
 
 
-        System.out.println("Hello!");
+        System.out.println("Hello!\t hello");
 
         while (true) {
             System.out.println();
@@ -35,7 +35,7 @@ public class Main {
             String option = scan.nextLine();
             String[] conversion = option.split(" ");
 
-            if (conversion.length != 3 && conversion.length != 2) {
+            if (conversion.length != 3 && conversion.length != 2 && conversion.length != 1) {
                 System.out.println("Error invalid input please try again!");
             } else if (option.matches("quit")) {
                 break;
@@ -46,13 +46,13 @@ public class Main {
                     continue;
                 }
 
-                System.out.println("Converting" + conversion[1] + " to " + conversion[2]);
+                System.out.println("Converting " + conversion[1] + " to " + conversion[2]);
 
                 try {
-                    converter(INPUT + conversion[1], OUTPUT + conversion[2]);
-                    System.out.println("Converted " + INPUT + conversion[1] + " to " + OUTPUT + conversion[2]);
+                    converter(INPUT + conversion[1], conversion[2]);
+                    System.out.println("Converted " + INPUT + conversion[1] + " to " + conversion[2]);
                 } catch (Exception exp) {
-                    System.out.println("Error! Conversion failed please check format of input file! "
+                    System.out.println("Error! Conversion failed please check format of file! "
                             + exp.getMessage() +
                             " Please try again!");
                 }
@@ -64,17 +64,17 @@ public class Main {
                 }
                 System.out.println("Normalizing " + conversion[1]);
 
-                try{
-                    normalize(INPUT + conversion [1]);
+                try {
+                    normalize(INPUT + conversion[1]);
                     System.out.println("Normalized " + conversion[1]);
-                }catch (Exception exp){
+                } catch (Exception exp) {
                     System.out.println("Error! Normalization failed please check format of input file! " +
                             exp.getMessage() +
                             " Please try again!");
                 }
 
 
-            }else
+            } else
                 System.out.println("Error! invalid command Please try again");
         }
 
@@ -83,19 +83,19 @@ public class Main {
     public static void converter(String start, String convert) throws Exception {
         String startEnd = start.substring(start.length() - 3);
         String convertEnd = convert.substring(convert.length() - 3);
-        if (start.matches(convert)) {
-            throw new Exception("Same file");
-        }
+        if (start.matches(convert))
+            throw new Exception("Same file!");
+
         Scanner in = new Scanner(new File(start));
         PrintWriter out = new PrintWriter(convert);
-        if (startEnd.matches(convertEnd)){ // Same format
-            if (startEnd.matches("txt")){ // text to txt
-                while(in.hasNextLine()){
-                    String [] text = in.nextLine().split("\t");
-                    for (int i = 0; i < text.length; i++){
+        if (startEnd.matches(convertEnd)) { // Same format
+            if (startEnd.matches("txt")) { // text to txt
+                while (in.hasNextLine()) {
+                    String[] text = in.nextLine().split("\t");
+                    for (int i = 0; i < text.length; i++) {
                         String seperate = "\t";
-                        if (i == text.length -1){
-                            if(in.hasNextLine())
+                        if (i == text.length - 1) {
+                            if (in.hasNextLine())
                                 seperate = "\n";
                             else
                                 seperate = "";
@@ -105,12 +105,12 @@ public class Main {
                     out.flush();
                 }
             } else { // csv to csv
-                while (in.hasNextLine()){
+                while (in.hasNextLine()) {
                     String input = in.nextLine();
                     String[] cells = input.split(",");
-                    for (int i = 0; i < cells.length; i++){
+                    for (int i = 0; i < cells.length; i++) {
                         String seperate = ",";
-                        if (i == cells.length -1 ){
+                        if (i == cells.length - 1) {
                             seperate = "";
                         }
                         out.print(cells[i] + seperate);
@@ -119,14 +119,14 @@ public class Main {
                 }
 
             }
-        }else {
-            if (startEnd.matches("txt")){   // txt to csv
-                while (in.hasNextLine()){
+        } else {
+            if (startEnd.matches("txt")) {   // txt to csv
+                while (in.hasNextLine()) {
                     String input = in.nextLine();
-                    String [] text = input.split(",");
-                    for (int i = 0; i < text.length; i++){
-                        String seperate = "\t";
-                        if (i == text.length -1){
+                    String[] text = input.split(" ");
+                    for (int i = 0; i < text.length; i++) {
+                        String seperate = ",";
+                        if (i == text.length - 1) {
                             seperate = "";
                         }
                         out.print(text[i] + seperate);
@@ -135,13 +135,13 @@ public class Main {
                 }
 
 
-            }else{
-                while (in.hasNextLine()){ // csv to txt
+            } else {
+                while (in.hasNextLine()) { // csv to txt
                     String input = in.nextLine();
                     String[] cells = input.split(",");
-                    for (int i = 0; i < cells.length; i++){
+                    for (int i = 0; i < cells.length; i++) {
                         String seperate = "\t";
-                        if (i == cells.length -1){
+                        if (i == cells.length - 1) {
                             seperate = "";
                         }
                         out.print(cells[i] + seperate);
@@ -154,74 +154,96 @@ public class Main {
         in.close();
 
     }
+    public static String normalizeAll(String cell) throws FileNotFoundException {
 
-    public static void normalize(String source) throws FileNotFoundException{
-        String sValue;
-        int iValue;
-        double dValue;
+
+        if (checkInt(cell)) {
+           return normalizeInt(cell);
+        } else if (checkFD(cell)) {
+            return (normalizeFD(cell));
+        } else if (cell.length() > 13) {
+            return cell.substring(0, 10) + "...";
+        } else {
+            return cell;
+        }
+
+    }
+    public static boolean checkInt(String cell) {
+        try {
+            Integer.parseInt(cell);
+            return true;
+        } catch (NumberFormatException exp) {
+            return false;
+        }
+    }
+
+    public static boolean checkFD(String cell) {
+        try {
+            Double.parseDouble(cell);
+            return true;
+        } catch (NumberFormatException exp) {
+            return false;
+        }
+    }
+
+    public static String normalizeInt(String cell) {
+        int input = Integer.parseInt(cell);
+        if (cell.length() < 10) {
+            if (input > 0){
+                String rv = "%+0" + (11 - cell.length()) + "d";
+                return String.format(rv, input);
+            }else{
+                String rv = "%0" + (12 - cell.length()) + "d";
+                return String.format(rv, input);
+            }
+
+        } else {
+            return Integer.toString(input);
+        }
+    }
+
+    public static String normalizeFD(String cell) {
+        double input = Double.parseDouble(cell);
+        if (input > 100 || input < 0.01) {
+            return String.format("%.2g", input);
+        } else {
+            return String.format("%.2f", input);
+        }
+    }
+
+
+    public static void normalize(String source) throws FileNotFoundException {
+
+        String delimiter = source.endsWith("txt") ? "\t" : ",";
         ArrayList<String> content = new ArrayList<String>();
         Scanner in = new Scanner(new File(source));
-        String sourceEnd = source.substring(source.length()-3);
-        if (sourceEnd.matches("txt")){
-            in.useDelimiter("\t");
-        }else
-            in.useDelimiter(",");
-
         while (in.hasNextLine())
             content.add(in.nextLine());
         in.close();
         PrintWriter out = new PrintWriter(source);
-        if (!sourceEnd.matches("txt") && !sourceEnd.matches("csv"))
-            throw new FileNotFoundException("Not a .txt or .csv file");
-        for (int i = 0; i < content.size(); i++){
-            sValue = content.get(i);
-            if (sValue.length() == 0){
-                if (sourceEnd.matches("txt")){
-                    out.print("N/A\t");
-                    out.flush();
-                }else{
-                    out.print("N/A,");
-                    out.flush();
-                }
-                continue;
-            }
-            try{
-                iValue = Integer.parseInt(sValue);
-                if (sourceEnd.matches("txt")) {
-                    out.printf("%+010d\t", iValue);
-                }else
-                    out.printf("%+010d,", iValue);
-                out.flush();
-            } catch (NumberFormatException e){
-                try {
-                    dValue = Double.parseDouble(sValue);
-                    if (dValue > 100.0 || dValue < 0.01){
-                        if (sourceEnd.matches("txt")){
-                            out.printf("%.2e\t", dValue);
-                        }else
-                            out.printf("%.2e,", dValue);
-
-                    }else
-                        if (sourceEnd.matches("txt")){
-                            out.printf("%.2f\t", dValue);
-                        }else
-                            out.printf("%.2f,", dValue);
-                        out.flush();
-                }catch (NumberFormatException e1){
-                    if (sValue.length() > 13){
-                        if (sourceEnd.matches("txt")){
-                            out.printf("%.10s...\t", sValue);
-                        }else
-                            out.printf("%.10s...,", sValue);
-                        out.flush();
-                    }
-                }
-            }
+        int rows = content.size();
+        if (content.isEmpty()){
+            out.print("N/A");
         }
-        in.close();
+        for (String line : content) {
+            String[] cells = line.split(delimiter);
+            int cols = cells.length;
+            for (String cell : cells) {
+                String normalCell = normalizeAll(cell);
+                cols--;
+                out.print(normalCell);
+                if (cols != 0)
+                    out.print(delimiter);
+            }
+            rows--;
+            if (rows != 0)
+                out.println();
+        }
         out.close();
 
-    }
+        }
+
+
 
 }
 
